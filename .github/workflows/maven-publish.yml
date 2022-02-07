@@ -27,10 +27,24 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    - name: Build with Maven
+    - name: Build and Test with Maven
       run: mvn -B package --file pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        
+    - name: Azure Container Registry Login
+      uses: Azure/docker-login@v1
+      with:
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+        login-server: ${{ secrets.ACR_NAME }}.azurecr.io
+
+    - name: Docker Build and Push to aCR
+      run: |
+        docker build . -t $ACR_NAME/restapi:${{ github.sha }}
+        docker push $ACR_NAME/restapi:${{ github.sha }}
+      env:
+        ACR_NAME: ${{ secrets.ACR_NAME }}
