@@ -67,7 +67,7 @@ jobs:
         helmChart: "./spring-boot-app/"
         overrideFiles: "./spring-boot-app/values.yaml"
         overrides: |
-          replicas:2
+          replicaCount:2
         helm-version: "latest"
       id: bake
       
