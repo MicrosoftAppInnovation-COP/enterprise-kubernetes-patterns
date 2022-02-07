@@ -40,11 +40,9 @@ jobs:
       with:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        login-server: ${{ secrets.ACR_NAME }}.azurecr.io
+        login-server: acrhsdemodevops.azurecr.io
 
     - name: Docker Build and Push to aCR
       run: |
-        docker build . -t $ACR_NAME/restapi:${{ github.sha }}
-        docker push $ACR_NAME/restapi:${{ github.sha }}
-      env:
-        ACR_NAME: ${{ secrets.ACR_NAME }}
+        docker build . -t acrhsdemodevops.azurecr.io/restapi:${{ github.sha }}
+        docker push acrhsdemodevops.azurecr.io/restapi:${{ github.sha }}
