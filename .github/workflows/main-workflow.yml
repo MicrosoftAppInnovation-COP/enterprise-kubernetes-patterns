@@ -42,7 +42,44 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         login-server: acrhsdemodevops.azurecr.io
 
-    - name: Docker Build and Push to aCR
+    - name: Docker Build and Push to ACR
       run: |
         docker build . -t acrhsdemodevops.azurecr.io/restapi:${{ github.sha }}
         docker push acrhsdemodevops.azurecr.io/restapi:${{ github.sha }}
+        
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: azure/setup-kubectl@v2.0
+
+      # Set the target AKS cluster.
+    - uses: Azure/aks-set-context@v1
+      with:
+        creds: "${{ secrets.AZURE_SP_CREDS }}"
+        cluster-name: aks-test-devops-poc
+        resource-group: aks-devsecops
+
+    - uses: azure/k8s-bake@v2
+      with:
+        renderEngine: "helm"
+        helmChart: "./spring-boot-app/"
+        overrideFiles: "./spring-boot-app/values.yaml"
+        overrides: |
+          replicas:2
+        helm-version: "latest"
+      id: bake
+      
+    - name: Validate created manifest ${{ matrix.os }}
+      uses: Azure/k8s-lint@v1
+      with:
+        manifests: ${{ steps.bake.outputs.manifestsBundle }}
+
+    - uses: Azure/k8s-deploy@v1.4
+      with:
+        action: deploy
+        namespace: pipeline-deploy
+        manifests: ${{ steps.bake.outputs.manifestsBundle }}
+        images: |
+          acrhsdemodevops.azurecr.io/restapi:${{ github.sha }}
