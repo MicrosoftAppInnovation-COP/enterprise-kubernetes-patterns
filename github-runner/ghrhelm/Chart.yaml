@@ -1,5 +1,5 @@
 apiVersion: v2
-name: ghr
+name: ghrunner
 description: A Github runner for kubernetes
 
 type: application

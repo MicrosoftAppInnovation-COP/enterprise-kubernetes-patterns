@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: ""
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 ingress:
   enabled: false
@@ -42,7 +42,7 @@ ghr:
   github_token: ""
 
 autoscaling:
-  enabled: true
+  enabled: false
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80

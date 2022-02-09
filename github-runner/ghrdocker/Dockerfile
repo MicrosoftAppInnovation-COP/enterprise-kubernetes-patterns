@@ -16,6 +16,13 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash && \
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
+ARG GH_RUNNER_VERSION="2.287.1"
+WORKDIR /actions-runner
+RUN curl -o actions.tar.gz --location "https://github.com/actions/runner/releases/download/v${GH_RUNNER_VERSION}/actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz" && \
+    tar -zxf actions.tar.gz && \
+    rm -f actions.tar.gz && \
+    ./bin/installdependencies.sh
+
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["/actions-runner/entrypoint.sh"]
