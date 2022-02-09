@@ -62,7 +62,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Set the target AKS cluster.
-    - uses: Azure/aks-set-context@v1
+    - uses: Azure/aks-set-context@v2
       with:
         cluster-name: aks-test-devops-poc
         resource-group: aks-devsecops
