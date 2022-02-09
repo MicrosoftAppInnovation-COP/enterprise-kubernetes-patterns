@@ -8,11 +8,15 @@ on:
     branches:
     - main
     - release/*
+    - ci-workflow
+
+env:
+  ACR_REGISTRY_NAME: ${{ secrets.ACR_REGISTRY_NAME }} 
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -34,30 +38,28 @@ jobs:
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
-        
-    - name: Azure Container Registry Login
-      uses: Azure/docker-login@v1
-      with:
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        login-server: acrhsdemodevops.azurecr.io
 
-    - name: Docker Build and Push to ACR
+    ### Ideally should use pod identity here to talk with Azure services
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} # https://github.com/Azure/login#configure-a-service-principal-with-a-secret
+
+    - name: ACR Build and Push to Registry
       run: |
-        docker build . -t acrhsdemodevops.azurecr.io/restapi:${{ github.sha }}
-        docker push acrhsdemodevops.azurecr.io/restapi:${{ github.sha }}
+        az acr build --image restapi:${{ github.sha }} \
+            --registry $ACR_REGISTRY_NAME \
+            --file Dockerfile .
         
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
-
-    - uses: azure/setup-kubectl@v2.0
 
       # Set the target AKS cluster.
     - uses: Azure/aks-set-context@v1
       with:
-        creds: "${{ secrets.AZURE_SP_CREDS }}"
+        creds: "${{ secrets.AZURE_CREDENTIALS }}"
         cluster-name: aks-test-devops-poc
         resource-group: aks-devsecops
 
@@ -71,7 +73,7 @@ jobs:
         helm-version: "latest"
       id: bake
       
-    - name: Validate created manifest ${{ matrix.os }}
+    - name: Validate created manifest
       uses: Azure/k8s-lint@v1
       with:
         manifests: ${{ steps.bake.outputs.manifestsBundle }}
@@ -79,7 +81,7 @@ jobs:
     - uses: Azure/k8s-deploy@v1.4
       with:
         action: deploy
-        namespace: pipeline-deploy
+        namespace: production
         manifests: ${{ steps.bake.outputs.manifestsBundle }}
         images: |
-          acrhsdemodevops.azurecr.io/restapi:${{ github.sha }}
+          $ACR_REGISTRY_NAME.azurecr.io/restapi:${{ github.sha }}

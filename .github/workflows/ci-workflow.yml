@@ -8,11 +8,7 @@ on:
     branches:
     - main
     - release/*
-  push:
-    branches:
-    - main
-    - release/*
-
+    
 env:
   ACR_REGISTRY_NAME: ${{ secrets.ACR_REGISTRY_NAME }} 
 

@@ -4,6 +4,8 @@
 
 replicaCount: 1
 
+namespace: prod
+
 image:
   repository: acrhsdemodevops.azurecr.io/restapi
   pullPolicy: IfNotPresent
