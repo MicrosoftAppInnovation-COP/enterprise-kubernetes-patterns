@@ -4,3 +4,4 @@ namespace: ghrunner-namespace
 resources:
   - ghrunner.yaml
   - certmanager.yaml
+  - namespace.yaml
