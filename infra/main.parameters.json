@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "location": {
+        "value": "eastus"
+      },
+      "resourceGroupName": {
+        "value": "app-innovation-landing-zone"
+      },
+      "clientIp": {
+        "value": "<SPECIFY YOUR LOCAL IP>"
+      },
+      "azureContainerInstanceOID": {
+        "value": "<OBJECT ID OF SERVICE PRINCIPAL>"
+      },
+      "aksPublicKeySSH": {
+        "value": "<PASTE YOUR PUBLIC SSH KEY FILE>"
+      }
+    }
+  }
