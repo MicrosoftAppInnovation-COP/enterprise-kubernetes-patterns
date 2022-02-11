@@ -201,25 +201,11 @@ resource aksRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-p
   }
 }
 
-var acrName  = 'acr${uniqueString(resourceGroup().id)}'
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
-  name: acrName
-  location: location
-  sku: {
-    name: 'Basic'
-  }
-  properties: {
-    adminUserEnabled: true
-  }
-}
-
-resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
-  name: guid(userAssignedManagedIdentity.id, resourceGroup().id, 'acr')
-  scope: containerRegistry
-  properties: {
-    principalId: kubeletManagedIdentity.properties.principalId
-    roleDefinitionId: '${subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')}'
-    principalType: 'ServicePrincipal'
+module acrResources 'acr/acr.bicep' = {
+  name: 'acrResources'
+  params: {
+    kubeletManagedIdentityPrincipalId: kubeletManagedIdentity.properties.principalId
+    location: location
   }
 }
 
@@ -249,7 +235,6 @@ resource dnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
       }
     }
   }
-
 }
 
 

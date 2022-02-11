@@ -64,6 +64,7 @@ param vnetSpokeConfig object = {
       name: 'AksSubnet'
       properties: {
         addressPrefix: '10.1.1.0/24'
+        privateEndpointNetworkPolicies: 'Disabled'
       }
     }
     {
@@ -76,6 +77,7 @@ param vnetSpokeConfig object = {
       name: 'ServicesSubnet'
       properties: {
         addressPrefix: '10.1.3.0/24'
+        privateEndpointNetworkPolicies: 'Disabled'
       }
     }
   ]
