@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: ghrunner-namespace
 resources:
   - release.yaml
-  - runnerdeployment.yaml
