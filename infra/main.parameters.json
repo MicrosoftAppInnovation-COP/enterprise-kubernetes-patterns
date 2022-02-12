@@ -16,6 +16,18 @@
       },
       "aksPublicKeySSH": {
         "value": "<PASTE YOUR PUBLIC SSH KEY FILE>"
+      },
+      "aksClusterName":{
+        "value": "aks-cluster"
+      },
+      "githubToken": {
+        "value": "<PASTE YOUR GITHUB PAT>"
+      },
+      "githubRepository": {
+        "value": "<PASTE YOUR GITHUB REPOSITORY URL>"
+      },
+      "githubBranch": {
+        "value": "main"
       }
     }
   }

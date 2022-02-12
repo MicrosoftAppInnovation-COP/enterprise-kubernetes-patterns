@@ -3,6 +3,11 @@ param aksClusterName string
 
 @secure()
 param githubToken string
+param githubRepository string
+param githubBranch string = 'main'
+
+@description('This should align to gitops deployments for cluster services')
+param gitopsNamespace string = 'ghrunner-namespace'
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
   name: 'postDeploymentMI'
@@ -77,6 +82,18 @@ resource azureArcDeploymentScript 'Microsoft.Resources/deploymentScripts@2020-10
         name: 'GITHUB_TOKEN'
         secureValue: githubToken
       }
+      {
+        name: 'GITHUB_REPOSITORY'
+        value: githubRepository
+      }
+      {
+        name: 'GITHUB_BRANCH'
+        value: githubBranch
+      }
+      {
+        name: 'GITOPS_NAMESPACE'
+        value: gitopsNamespace
+      }
     ]
     scriptContent: '''
       az extension add -n k8s-configuration
@@ -85,23 +102,24 @@ resource azureArcDeploymentScript 'Microsoft.Resources/deploymentScripts@2020-10
       az aks command invoke \
         --resource-group $RESOURCE_GROUP \
         --name $CLUSTER_NAME \
-        --command "kubectl create ns ghrunner-namespace"
+        --command "kubectl create ns ${GITOPS_NAMESPACE}"
 
       az aks command invoke \
         --resource-group $RESOURCE_GROUP \
         --name $CLUSTER_NAME \
-        --command "kubectl create secret generic controller-manager -n ghrunner-namespace --from-literal=github_token=${GITHUB_TOKEN}"
+        --command "kubectl create secret generic controller-manager -n ${GITOPS_NAMESPACE} --from-literal=github_token=${GITHUB_TOKEN}"
 
       az k8s-configuration flux create \
         -g $RESOURCE_GROUP \
         -c $CLUSTER_NAME \
-        -n gitops-setup-two \
-        --namespace ghrunner-namespace \
+        -n gitops-setup \
+        --namespace $GITOPS_NAMESPACE \
         -t managedClusters \
         --scope cluster \
-        -u https://github.com/haithamshahin333/spring-boot-restapi.git \
-        --branch gitops \
-        --kustomization name=clusterservices path=./gitops/cluster-services prune=true 
+        -u $GITHUB_REPO \
+        --branch $GITHUB_BRANCH \
+        --kustomization name=clusterservices path=./gitops/cluster-services prune=true \
+        --kustomization name=githubrunners path=./gitops/github-runner/github-runner-deployment prune=true dependsOn=["clusterservices"] --interval 3m
     '''
   }
 }
