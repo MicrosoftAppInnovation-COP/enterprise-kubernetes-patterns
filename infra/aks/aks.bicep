@@ -2,7 +2,7 @@
 param location string
 
 @description('Specifies the name of the AKS cluster.')
-param aksClusterName string = 'aksclustertwo'
+param aksClusterName string = 'akscluster'
 
 // @description('Specifies the DNS prefix specified when creating the managed cluster.')
 // param aksClusterDnsPrefix string = aksClusterName
