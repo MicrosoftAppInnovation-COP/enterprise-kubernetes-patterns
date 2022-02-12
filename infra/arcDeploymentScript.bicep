@@ -95,7 +95,7 @@ resource azureArcDeploymentScript 'Microsoft.Resources/deploymentScripts@2020-10
       az k8s-configuration flux create \
         -g $RESOURCE_GROUP \
         -c $CLUSTER_NAME \
-        -n gitops-newnew-setup \
+        -n gitops-setup-two \
         --namespace ghrunner-namespace \
         -t managedClusters \
         --scope cluster \
