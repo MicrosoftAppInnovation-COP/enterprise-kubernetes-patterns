@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: actions-runner-controller
+spec:
+  releaseName: actions-runner-controller
+  chart:
+    spec:
+      chart: actions-runner-controller
+      sourceRef:
+        kind: HelmRepository
+        name: actions-runner-controller
+        namespace: ghrunner-namespace
+  interval: 1m
+  dependsOn:
+    - name: cert-manager
+  values:

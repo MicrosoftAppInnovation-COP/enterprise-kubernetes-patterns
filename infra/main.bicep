@@ -12,6 +12,19 @@ param azureContainerInstanceOID string
 @description('Pass in your public SSH Key for node ssh access to aks')
 param aksPublicKeySSH string
 
+@description('AKS Cluster Name')
+param aksClusterName string = 'akscluster'
+
+@description('GitHub Repository')
+param githubRepository string = 'https://github.com/haithamshahin333/spring-boot-restapi'
+
+@description('GitHub Branch for gitops config')
+param githubBranch string = 'main'
+
+@secure()
+@description('GitHub PAT Token for GitHub Self-Hosted Runners')
+param githubToken string
+
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: resourceGroupName
   location: location
@@ -44,8 +57,24 @@ module containerServices 'aks/aks.bicep' = {
   params: {
     aksClusterSshPublicKey: aksPublicKeySSH
     location: resourceGroup.location
+    aksClusterName: aksClusterName
   }
   dependsOn: [
     vnets
+  ]
+}
+
+module arcDeploymentScript 'arcDeploymentScript.bicep' = {
+  scope: resourceGroup
+  name: 'arcDeploymentScript'
+  params: {
+    location: location
+    aksClusterName: aksClusterName
+    githubToken: githubToken
+    githubRepository: githubRepository
+    githubBranch: githubBranch
+  }
+  dependsOn: [
+    containerServices
   ]
 }
