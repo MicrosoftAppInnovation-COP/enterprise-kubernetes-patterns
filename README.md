@@ -77,7 +77,7 @@ Clone the repo and run all the following commands from the `infra` directory (`c
 
     > As the bicep deployment is running, you can track the progress in the portal
 
-    ![bicep-deployments-rg-scope-azure-portal](./assets/bicep-deployments-rg-scope-azure-portal.png)
+    ![bicep-deployments-rg-scope-azure-portal](./assets/deployment-list-portal.png)
 
 ## References
 
