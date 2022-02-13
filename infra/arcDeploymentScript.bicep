@@ -116,10 +116,10 @@ resource azureArcDeploymentScript 'Microsoft.Resources/deploymentScripts@2020-10
         --namespace $GITOPS_NAMESPACE \
         -t managedClusters \
         --scope cluster \
-        -u $GITHUB_REPO \
+        -u $GITHUB_REPOSITORY \
         --branch $GITHUB_BRANCH \
         --kustomization name=clusterservices path=./gitops/cluster-services prune=true \
-        --kustomization name=githubrunners path=./gitops/github-runner/github-runner-deployment prune=true dependsOn=["clusterservices"] --interval 3m
+        --kustomization name=githubrunners path=./gitops/github-runner/github-runner-deployment prune=true dependsOn=["clusterservices"] interval=3m
     '''
   }
 }
