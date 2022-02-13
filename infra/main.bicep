@@ -58,13 +58,14 @@ module containerServices 'aks/aks.bicep' = {
     aksClusterSshPublicKey: aksPublicKeySSH
     location: resourceGroup.location
     aksClusterName: aksClusterName
+    githubRepository: githubRepository
   }
   dependsOn: [
     vnets
   ]
 }
 
-module arcDeploymentScript 'arcDeploymentScript.bicep' = {
+module arcDeploymentScript 'fluxDeploymentScript.bicep' = {
   scope: resourceGroup
   name: 'arcDeploymentScript'
   params: {

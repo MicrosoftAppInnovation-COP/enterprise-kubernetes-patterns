@@ -1,6 +1,8 @@
 @description('Specifies the location of AKS cluster.')
 param location string
 
+param githubRepository string
+
 @description('Specifies the name of the AKS cluster.')
 param aksClusterName string = 'akscluster'
 
@@ -206,6 +208,7 @@ module acrResources 'acr/acr.bicep' = {
   params: {
     kubeletManagedIdentityPrincipalId: kubeletManagedIdentity.properties.principalId
     location: location
+    githubRepository: githubRepository
   }
 }
 

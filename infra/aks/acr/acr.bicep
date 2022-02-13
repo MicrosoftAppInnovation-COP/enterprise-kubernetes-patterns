@@ -17,7 +17,10 @@ param spokeVirtualNetworkName string = 'spoke'
 param spokeSubnetName string = 'ServicesSubnet'
 var acrSubnetId = resourceId('Microsoft.Network/virtualNetworks/subnets', spokeVirtualNetworkName, spokeSubnetName)
 
+
+param githubRepository string
 var acrName  = 'acr${uniqueString(resourceGroup().id)}'
+var dockerfileContextPath = 'gitops/github-runner/Dockerfile'
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
   name: acrName
   location: location
@@ -28,6 +31,31 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-pr
     adminUserEnabled: acrAdminUserEnabled
     networkRuleBypassOptions: 'AzureServices'
     publicNetworkAccess: 'Disabled'
+  }
+
+  resource runnerBuildTask 'tasks@2019-06-01-preview' = {
+    name: 'githubRunnerBuildTask'
+    location: location
+    identity: {
+      type: 'SystemAssigned'
+    }
+    properties: {
+      credentials: {
+        sourceRegistry: {
+          loginMode: 'Default'
+        }
+      }
+      status: 'Enabled'
+      step: {
+        type: 'Docker'
+        dockerFilePath: dockerfileContextPath
+        contextPath: githubRepository
+        imageNames: [
+          'custom-gh-runner:latest'
+        ]
+        isPushEnabled: true
+      }
+    }
   }
 }
 
