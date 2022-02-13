@@ -10,7 +10,7 @@
 1. From cloud shell, clone the repo, and call ACR to build and store github runner image:
 
 ```bash
-git clone https://github.com/haithamshahin333/spring-boot-restapi.git
+git clone https://github.com/haithamshahin333/enterprise-kubernetes-patterns.git
 
 # clone the repo and navigate to github-runner/ghrdocker
 cd github-runner/ghrdocker

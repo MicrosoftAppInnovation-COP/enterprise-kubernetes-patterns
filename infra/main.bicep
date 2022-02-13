@@ -16,7 +16,7 @@ param aksPublicKeySSH string
 param aksClusterName string = 'akscluster'
 
 @description('GitHub Repository')
-param githubRepository string = 'https://github.com/haithamshahin333/spring-boot-restapi'
+param githubRepository string = 'https://github.com/haithamshahin333/enterprise-kubernetes-patterns'
 
 @description('GitHub Branch for gitops config')
 param githubBranch string = 'main'
