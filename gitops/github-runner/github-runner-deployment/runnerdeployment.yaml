@@ -2,10 +2,11 @@
 apiVersion: actions.summerwind.dev/v1alpha1
 kind: RunnerDeployment
 metadata:
-  name: example-runnerdeploy
+  name: spring-boot-runner
 spec:
   replicas: 2
   template:
     spec:
-      organization: haithamshahin333
-      env: []
+      repository: haithamshahin333/spring-boot-rest-api
+      labels:
+        - spring-boot-runner
