@@ -93,6 +93,51 @@ resource acrTaskRun 'Microsoft.ContainerRegistry/registries/taskRuns@2019-06-01-
   }
 }
 
+resource acrGenericBuildTask 'Microsoft.ContainerRegistry/registries/tasks@2019-06-01-preview' = {
+  name: 'acrGenericBuildTask'
+  parent: containerRegistry
+  location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    platform: {
+      os: 'Linux'
+    }
+    credentials: {
+      customRegistries: {
+        '${containerRegistry.properties.loginServer}': {
+          'identity': '[system]'
+        }
+      }
+      sourceRegistry: {
+        loginMode: 'Default'
+      }
+    }
+    status: 'Enabled'
+    step: {
+      type: 'Docker'
+      dockerFilePath: 'Dockerfile'
+      contextPath: '${githubRepository}.git'
+      imageNames: [
+        'app:latest'
+      ]
+      isPushEnabled: true
+    }
+  }
+}
+
+
+resource acrGenericBuildTaskPushRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
+name: guid(acrGenericBuildTask.id, 'acrTask')
+scope: containerRegistry
+properties: {
+  principalId: acrGenericBuildTask.identity.principalId
+  roleDefinitionId: '${subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8311e382-0749-4cb8-b61a-304f252e45ec')}'
+  principalType: 'ServicePrincipal'
+}
+}
+
 var acrPullRoleAssignmentName = guid(kubeletManagedIdentityPrincipalId, resourceGroup().id, 'acr')
 resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
   name: acrPullRoleAssignmentName
