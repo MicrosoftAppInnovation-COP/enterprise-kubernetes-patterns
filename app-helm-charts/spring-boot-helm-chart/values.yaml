@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: acrhsdemodevops.azurecr.io/restapi
+  repository: ""
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
