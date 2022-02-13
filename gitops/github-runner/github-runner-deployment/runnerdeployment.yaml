@@ -11,5 +11,4 @@ spec:
       image: acr5r7qx6743t7ly.azurecr.io/custom-gh-runner
       labels:
         - spring-boot-runner
-        - custom-image
         - az-cli
