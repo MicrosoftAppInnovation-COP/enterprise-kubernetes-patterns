@@ -28,7 +28,7 @@
 
         3. Run jobs from within AKS to communicate to ACR through the az cli (could levage Pod Identities to provide permissions to the job based on it's desired functionality).
 
-## Getting Started
+## Deployment Steps
 
 1. Run the commands specified in the [infra deployment instructions](./infra/README.md) to deploy the following with Bicep:
 
