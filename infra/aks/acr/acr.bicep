@@ -40,7 +40,15 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-pr
       type: 'SystemAssigned'
     }
     properties: {
+      platform: {
+        os: 'Linux'
+      }
       credentials: {
+        customRegistries: {
+          '${containerRegistry.properties.loginServer}': {
+            'identity': '[system]'
+          }
+        }
         sourceRegistry: {
           loginMode: 'Default'
         }
@@ -49,12 +57,38 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-pr
       step: {
         type: 'Docker'
         dockerFilePath: dockerfileContextPath
-        contextPath: githubRepository
+        contextPath: '${githubRepository}.git'
         imageNames: [
           'custom-gh-runner:latest'
         ]
         isPushEnabled: true
       }
+    }
+  }
+}
+
+
+resource acrTaskPushRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
+  name: guid(containerRegistry::runnerBuildTask.id, 'acrTask')
+  scope: containerRegistry
+  properties: {
+    principalId: containerRegistry::runnerBuildTask.identity.principalId
+    roleDefinitionId: '${subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8311e382-0749-4cb8-b61a-304f252e45ec')}'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource acrTaskRun 'Microsoft.ContainerRegistry/registries/taskRuns@2019-06-01-preview' = {
+  name: 'acrTaskRunGitHubRunner'
+  parent: containerRegistry
+  location: location
+  dependsOn: [
+    acrTaskPushRoleAssignment
+  ]
+  properties: {
+    runRequest: {
+      type: 'TaskRunRequest'
+      taskId: containerRegistry::runnerBuildTask.id
     }
   }
 }
