@@ -7,5 +7,5 @@ spec:
   replicas: 2
   template:
     spec:
-      repository: haithamshahin333/spring-boot-restapi
+      organization: haithamshahin333
       env: []
