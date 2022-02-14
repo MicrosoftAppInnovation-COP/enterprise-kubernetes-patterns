@@ -56,6 +56,11 @@ resource azureArcDeploymentScript 'Microsoft.Resources/deploymentScripts@2020-10
   name: 'azureArcDeploymentScript'
   location: location
   kind: 'AzureCLI'
+  dependsOn: [
+    aksRoleAssignment
+    deploymentScriptRoleAssignment_AKS
+    deploymentScriptRoleAssignment_Arc
+  ]
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {

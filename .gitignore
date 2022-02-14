@@ -2,6 +2,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/gradle,maven,java,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=gradle,maven,java,visualstudiocode
 
+**/keys
+
 ### Java ###
 # Compiled class file
 *.class

@@ -34,29 +34,78 @@
 
 ## Deployment Steps
 
-Clone the repo and run all the following commands from the `infra` directory (`cd ./infra`).
+1. Fork the repo to your personal org:
 
-1. Run the following to obtain the ACI Object ID Needed to inject cloud shell into VNET:
+    ![fork-repo](./assets/fork-repo.png)
+
+2. Clone the repo and navigate to the `infra` directory (`cd enterprise-kubernetes-patterns/infra`):
+
+    ```bash
+    #clone the repo
+    git clone <FORKED REPO URL>
+    cd ./infra
+    ```
+
+3. Login to Azure from your terminal:
+
+    ```bash
+    #Follow prompt to login
+    az login --use-device-code
+    ```
+
+4. Run the following to obtain the ACI Object ID Needed to inject cloud shell into VNET:
 
     > Reference: [Cloud Shell in VNET Template](https://azure.microsoft.com/en-us/resources/templates/cloud-shell-vnet/)
     > Works for both US Government and Azure Commercial Clouds
 
     ```bash
-    az ad sp list --display-name 'Azure Container Instance' -o table --filter "appid eq '6bb8e274-af5d-4df2-98a3-4fd78b4cafd9'"
+    #Make sure the resource provider is registered
+    az provider register --namespace 'Microsoft.ContainerInstance'
+
+    #Wait until you see the following command showing a RegistrationState of 'Registered'
+    az provider show -n Microsoft.ContainerInstance -o table
+
+    #Once registered, run the following and copy the objectID that appears as output
+    az ad sp list \
+    --display-name 'Azure Container Instance' \
+    -o tsv \
+    --filter "appid eq '6bb8e274-af5d-4df2-98a3-4fd78b4cafd9'" \
+    --query [0].objectId
     ```
 
-2. Create an SSH Public-Private key pair to use for AKS:
+5. Create an SSH Public-Private key pair to use for AKS:
 
     > Reference: [AKS Create SSH Key Pair](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough-rm-template#create-an-ssh-key-pair)
+
+    > Be sure not to commit these key files to your repo
 
     ```bash
     # the public key will be passed as a parameter to the bicep deployment
     ssh-keygen -t rsa -b 4096
     ```
 
-3. Generate a [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) for the Self-Hosted GitHub Runners. The agent token will require repo (full control) scopes if using a repository runner. Copy the token so that you can paste it for your paramters file.
+6. Generate a [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) for the Self-Hosted GitHub Runners. The agent token will require repo (full control) scopes if using a repository runner. Copy the token so that you can paste it for your paramters file.
 
-4. Copy the `main.parameters.json` file to `local.parameters.json` and specify your values. From there, run the following command:
+7. Register the following resource providers:
+
+    ```bash
+    az feature register --namespace Microsoft.ContainerService --name AKS-ExtensionManager
+    az provider register --namespace Microsoft.Kubernetes
+    az provider register --namespace Microsoft.KubernetesConfiguration
+    az provider register --namespace Microsoft.ContainerService
+
+    #Once the following shows 'Registered', run the registration on containerservice to propogate change
+    az feature show --namespace Microsoft.ContainerService --name AKS-ExtensionManager
+    az provider show -n Microsoft.Kubernetes -o table
+    az provider show -n Microsoft.KubernetesConfiguration -o table
+    az provider show -n Microsoft.ContainerService -o table
+
+    #You can proceed to next step once the following shows 'Registered'
+    az feature show --namespace Microsoft.ContainerService --name AKS-ExtensionManager
+    az provider show -n Microsoft.ContainerService -o table
+    ```
+
+8. Copy the `main.parameters.json` file to `local.parameters.json` and specify your values. From there, run the following command:
 
     > Be sure not to commit your `local.paramters.json` file that you will create below. All files starting with `local*` are ignored - you can see this in the local `.gitignore`.
 
