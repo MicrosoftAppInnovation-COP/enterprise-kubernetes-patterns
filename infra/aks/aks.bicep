@@ -323,3 +323,17 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-02-01' = {
     fqdnSubdomain: aksClusterName
   }
 }
+
+resource flux 'Microsoft.KubernetesConfiguration/extensions@2021-09-01' = {
+  name: 'flux'
+  scope: aksCluster
+  properties: {
+    extensionType: 'microsoft.flux'
+    scope: {
+      cluster: {
+        releaseNamespace: 'flux-system'
+      }
+    }
+    autoUpgradeMinorVersion: true
+  }
+}
