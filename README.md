@@ -130,6 +130,8 @@
     
 9. As a final step, update [the image referenced for the github runner](https://github.com/haithamshahin333/enterprise-kubernetes-patterns/blob/c76d8693549be25be8ae69fcf977c2c1ede45136/gitops/github-runner/github-runner-deployment/runnerdeployment.yaml#L11) so that it points to the ACR instance created from the deployment. By updating to `ACR_NAME.azurecr.io/custom-gh-runner` Flux will then reconcile the change and deploy the image that was built in ACR.
 
+10. Deploy the example [Spring Boot REST API](https://github.com/haithamshahin333/spring-boot-rest-api) to see a GitHub Actions pipeline that leverages your self-hosted agents and deploys the app to the cluster.
+
 ## References
 
 * [Reference on how to connect to the cloud shell within the VNET](https://docs.microsoft.com/en-us/azure/cloud-shell/private-vnet#configuring-cloud-shell-to-use-a-virtual-network)
