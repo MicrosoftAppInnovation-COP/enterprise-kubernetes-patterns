@@ -8,7 +8,7 @@ spec:
   template:
     spec:
       repository: haithamshahin333/spring-boot-rest-api
-      image: acr5r7qx6743t7ly.azurecr.io/custom-gh-runner
+      image: acrowhs4mggej7jc.azurecr.io/custom-gh-runner
       labels:
         - spring-boot-runner
         - az-cli
