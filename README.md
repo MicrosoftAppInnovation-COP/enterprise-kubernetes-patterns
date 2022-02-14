@@ -127,6 +127,8 @@
     > As the bicep deployment is running, you can track the progress in the portal
 
     ![bicep-deployments-rg-scope-azure-portal](./assets/deployment-list-portal.png)
+    
+9. As a final step, update [the image referenced for the github runner](https://github.com/haithamshahin333/enterprise-kubernetes-patterns/blob/c76d8693549be25be8ae69fcf977c2c1ede45136/gitops/github-runner/github-runner-deployment/runnerdeployment.yaml#L11) so that it points to the ACR instance created from the deployment. By updating to `ACR_NAME.azurecr.io/custom-gh-runner` Flux will then reconcile the change and deploy the image that was built in ACR.
 
 ## References
 
