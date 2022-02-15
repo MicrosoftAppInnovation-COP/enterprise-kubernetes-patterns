@@ -1,6 +1,6 @@
-# App Innovation Landing Zone with Kubernetes, GitHub, and Java
+# App Innovation journey with Kubernetes, GitHub, and Java
 
-## Overview of Landing Zone and Applied Patterns
+## Overview of App Innovation journey which includes a Landing Zone and Applied Patterns
 
 1. [Infrastructure-as-Code](https://docs.microsoft.com/en-us/devops/deliver/what-is-infrastructure-as-code) with [Azure Bicep](https://github.com/Azure/bicep)
 
